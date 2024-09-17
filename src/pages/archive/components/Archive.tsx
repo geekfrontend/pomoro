@@ -3,6 +3,7 @@ import Header from "../../../components/Header";
 import NoteItem from "../../home/components/NoteItem";
 import Search from "../../../components/Search";
 import { Note } from "../../../types/note";
+import PropTypes from "prop-types";
 
 interface ArchiveProps {
   notes: Array<Note>;
@@ -23,6 +24,7 @@ const Archive = ({
   const filteredNotes = notes.filter((note) =>
     note.title.toLowerCase().includes(query)
   );
+
   return (
     <>
       <Header title="Archive" />
@@ -46,6 +48,13 @@ const Archive = ({
       </div>
     </>
   );
+};
+
+Archive.propTypes = {
+  notes: PropTypes.array.isRequired,
+  deleteNote: PropTypes.func.isRequired,
+  archiveNote: PropTypes.func.isRequired,
+  unarchiveNote: PropTypes.func.isRequired,
 };
 
 export default Archive;

@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 const Header = ({ title, onBack }: { title: string; onBack?: () => void }) => {
   return (
     <header className="sticky top-0 z-50">
@@ -15,6 +17,11 @@ const Header = ({ title, onBack }: { title: string; onBack?: () => void }) => {
       </div>
     </header>
   );
+};
+
+Header.propTypes = {
+  title: PropTypes.string.isRequired,
+  onBack: PropTypes.func,
 };
 
 export default Header;

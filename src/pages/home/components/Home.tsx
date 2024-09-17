@@ -3,6 +3,7 @@ import Header from "../../../components/Header";
 import NoteItem from "./NoteItem";
 import Search from "../../../components/Search";
 import { Note } from "../../../types/note";
+import PropTypes from "prop-types";
 
 interface HomeProps {
   notes: Array<Note>;
@@ -42,6 +43,13 @@ const Home = ({ notes, deleteNote, archiveNote, unarchiveNote }: HomeProps) => {
       </div>
     </>
   );
+};
+
+Home.propTypes = {
+  notes: PropTypes.array.isRequired,
+  deleteNote: PropTypes.func.isRequired,
+  archiveNote: PropTypes.func.isRequired,
+  unarchiveNote: PropTypes.func.isRequired,
 };
 
 export default Home;

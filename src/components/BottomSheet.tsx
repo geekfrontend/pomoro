@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import Portal from "./Portal";
+import PropTypes from "prop-types";
 
 const BottomSheet = ({
   children,
@@ -58,7 +59,6 @@ const BottomSheet = ({
     setIsBottomSheetOpen(false);
   };
 
-  // Prevent clicks inside the bottom sheet from closing it
   const handleSheetClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
@@ -71,7 +71,7 @@ const BottomSheet = ({
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         }`}
-        onClick={handleBackdropClick} // Clicks on backdrop close the sheet
+        onClick={handleBackdropClick}
       >
         <div
           ref={sheetRef}
@@ -84,17 +84,23 @@ const BottomSheet = ({
           onTouchStart={handleDragStart}
           onTouchMove={handleDragMove}
           onTouchEnd={handleDragEnd}
-          onClick={handleSheetClick} // Prevent clicks inside the sheet from closing it
+          onClick={handleSheetClick}
         >
           <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4"></div>
 
-          <h2 className="text-xl font-semibold mb-4">Create New Note</h2>
+          <h2 className="mb-4 text-xl font-semibold">Create New Note</h2>
 
           <div>{children}</div>
         </div>
       </div>
     </Portal>
   );
+};
+
+BottomSheet.propTypes = {
+  children: PropTypes.node.isRequired,
+  isBottomSheetOpen: PropTypes.bool.isRequired,
+  setIsBottomSheetOpen: PropTypes.func.isRequired,
 };
 
 export default BottomSheet;

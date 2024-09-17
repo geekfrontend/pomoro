@@ -2,6 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import PropTypes from "prop-types";
 
 const schema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
@@ -101,6 +102,11 @@ const AddEditNote: React.FC<{
       </form>
     </>
   );
+};
+
+AddEditNote.propTypes = {
+  createNote: PropTypes.func.isRequired,
+  setIsBottomSheetOpen: PropTypes.func.isRequired,
 };
 
 export default AddEditNote;

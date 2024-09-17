@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import BottomSheet from "./BottomSheet";
 import AddEditNote from "./AddEditNote";
+import PropTypes from "prop-types";
 
 const AppBar = ({
   createNote,
@@ -17,7 +18,7 @@ const AppBar = ({
 
   return (
     <div className="fixed bottom-0 w-full max-w-[480px] mx-auto backdrop-blur-">
-      <div className="flex gap-1 justify-between items-center py-2 px-4 mx-4 md:mx-16 mb-6 rounded-full border dark:border-neutral-600 bg-white dark:bg-neutral-900 shadow-lg text-neutral-600 dark:text-neutral-400">
+      <div className="flex items-center justify-between gap-1 px-4 py-2 mx-4 mb-6 bg-white border rounded-full shadow-lg md:mx-16 dark:border-neutral-600 dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400">
         <Link to="/">
           <button
             data-tooltip-target="tooltip-home"
@@ -44,10 +45,10 @@ const AppBar = ({
         <button
           data-tooltip-target="tooltip-note"
           type="button"
-          className="inline-flex flex-col items-center justify-center p-3 text-gray-500  "
+          className="inline-flex flex-col items-center justify-center p-3 text-gray-500 "
           onClick={toggleBottomSheet}
         >
-          <i className="ri-add-fill text-3xl"></i>
+          <i className="text-3xl ri-add-fill"></i>
           <span className="sr-only">New Note</span>
         </button>
         <div
@@ -93,6 +94,10 @@ const AppBar = ({
       </BottomSheet>
     </div>
   );
+};
+
+AppBar.propTypes = {
+  createNote: PropTypes.func.isRequired,
 };
 
 export default AppBar;
