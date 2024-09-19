@@ -2,13 +2,8 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import BottomSheet from "./BottomSheet";
 import AddEditNote from "./AddEditNote";
-import PropTypes from "prop-types";
 
-const AppBar = ({
-  createNote,
-}: {
-  createNote: (title: string, body: string, archived: boolean) => void;
-}) => {
+const AppBar = () => {
   const { pathname } = useLocation();
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
@@ -87,17 +82,10 @@ const AppBar = ({
         isBottomSheetOpen={isBottomSheetOpen}
         setIsBottomSheetOpen={setIsBottomSheetOpen}
       >
-        <AddEditNote
-          createNote={createNote}
-          setIsBottomSheetOpen={setIsBottomSheetOpen}
-        />
+        <AddEditNote setIsBottomSheetOpen={setIsBottomSheetOpen} />
       </BottomSheet>
     </div>
   );
-};
-
-AppBar.propTypes = {
-  createNote: PropTypes.func.isRequired,
 };
 
 export default AppBar;

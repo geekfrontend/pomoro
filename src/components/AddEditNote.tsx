@@ -13,9 +13,8 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const AddEditNote: React.FC<{
-  createNote: (title: string, body: string, archived: boolean) => void;
   setIsBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ setIsBottomSheetOpen, createNote }) => {
+}> = ({ setIsBottomSheetOpen }) => {
   const {
     register,
     handleSubmit,
@@ -31,7 +30,7 @@ const AddEditNote: React.FC<{
   });
 
   const onSubmit = (data: FormData) => {
-    createNote(data.title, data.body, data.archived);
+    console.log(data);
     reset();
     setIsBottomSheetOpen(false);
   };
@@ -105,7 +104,6 @@ const AddEditNote: React.FC<{
 };
 
 AddEditNote.propTypes = {
-  createNote: PropTypes.func.isRequired,
   setIsBottomSheetOpen: PropTypes.func.isRequired,
 };
 

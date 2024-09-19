@@ -19,6 +19,9 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
+li {
+  list-style: none;
+}
 :focus {
   outline: none !important;
 }
