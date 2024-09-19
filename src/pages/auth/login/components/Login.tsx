@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ThemeToggle from "../../../../components/ThemeToggle";
+import LocaleToggle from "../../../../components/LocaleToggle";
+import { useLocale } from "../../../../context/LocaleContext";
+import { useAuth } from "../../../../context/AuthContext";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -26,6 +29,10 @@ type FormData = z.infer<typeof schema>;
 
 const Login: React.FC = () => {
   const [secureEntry, setSecureEntry] = useState(true);
+  const { translate } = useLocale();
+  const { loginUser, loading, error } = useAuth();
+
+  const navigate = useNavigate();
 
   const {
     register,
@@ -36,30 +43,24 @@ const Login: React.FC = () => {
     mode: "onChange",
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit = async (data: FormData) => {
+    try {
+      await loginUser({ email: data.email, password: data.password });
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen px-6 bg-white dark:bg-graydark">
-      {/* Toggle Theme */}
-      <div className="absolute bottom-6 right-4">
-        <ThemeToggle />
-      </div>
-
-      {/* Welcome Text */}
       <div className="w-full mb-4">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
-          Hey,
-        </h1>
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
-          Welcome Back
+          {translate("welcome")}
         </h1>
       </div>
 
-      {/* Form */}
       <form className="w-full mx-auto" onSubmit={handleSubmit(onSubmit)}>
-        {/* Email Input */}
         <div className="w-full mb-5">
           <label
             htmlFor="email"
@@ -71,7 +72,7 @@ const Login: React.FC = () => {
                 : "text-gray-900 dark:text-gray-300"
             }`}
           >
-            Email
+            {translate("email")}
           </label>
           <div className="flex items-center px-4 py-2 border rounded-xl dark:bg-gray-800 dark:border-gray-600">
             <i className="text-xl ri-mail-fill text-primary"></i>
@@ -96,7 +97,6 @@ const Login: React.FC = () => {
           )}
         </div>
 
-        {/* Password Input */}
         <div className="mb-5">
           <label
             htmlFor="password"
@@ -108,7 +108,7 @@ const Login: React.FC = () => {
                 : "text-gray-900 dark:text-gray-300"
             }`}
           >
-            Password
+            {translate("password")}
           </label>
           <div className="flex items-center px-4 py-2 border rounded-xl dark:bg-gray-800 dark:border-gray-600">
             <i className="text-xl ri-lock-password-fill text-primary"></i>
@@ -144,24 +144,29 @@ const Login: React.FC = () => {
           )}
         </div>
 
-        {/* Login Button */}
         <button
           type="submit"
-          disabled={!isValid}
+          disabled={!isValid || loading}
           className="w-full bg-blue-700 text-white font-medium rounded-xl py-2.5 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Login
+          {loading ? <span>Loading...</span> : translate("submit")}
         </button>
+        {error && (
+          <p className="mt-2 text-sm text-red-600 dark:text-red-500">{error}</p>
+        )}
       </form>
 
-      {/* Signup Link */}
       <div className="flex items-center justify-center mt-5 space-x-2">
         <p className="text-gray-900 dark:text-gray-300">
-          Don't have an account?
+          {translate("noAccount")}
         </p>
         <Link to="/register" className="text-blue-700 dark:text-blue-500">
-          Sign up
+          {translate("signUp")}
         </Link>
+      </div>
+      <div className="flex items-center justify-between mt-4 space-x-2">
+        <ThemeToggle />
+        <LocaleToggle />
       </div>
     </div>
   );

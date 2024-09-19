@@ -1,21 +1,41 @@
 import { createContext, useState, useContext, ReactNode } from "react";
-import {
-  RegisterRequest,
-  LoginRequest,
-  GetMeResponse,
-  LoginResponse,
-  RegisterResponse,
-} from "../services/auth/dto";
-import { register, login, getMe } from "../services/auth/authService";
+
+// Define your interfaces as needed
+interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+}
+
+interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+interface GetMeResponse {
+  id: string;
+  email: string;
+  name: string;
+}
+
+interface LoginResponse {
+  user: GetMeResponse;
+  token: string;
+}
+
+interface RegisterResponse {
+  user: GetMeResponse;
+  token: string;
+}
 
 interface AuthContextType {
   user: GetMeResponse | null;
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
-  registerUser: (data: RegisterRequest) => Promise<RegisterResponse | null>;
-  loginUser: (data: LoginRequest) => Promise<LoginResponse | null>;
-  fetchUser: () => Promise<GetMeResponse | null>;
+  registerUser: (data: RegisterRequest) => void;
+  loginUser: (data: LoginRequest) => void;
+  fetchUser: () => void;
   logout: () => void;
 }
 
@@ -31,44 +51,73 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const registerUser = async (data: RegisterRequest) => {
     setLoading(true);
     setError(null);
-    const response = await register(data);
-    if (response) {
+    console.log(data);
+    // Simulate API call
+    try {
+      // Replace with actual register logic
+      const response: RegisterResponse = {
+        user: {
+          id: "1",
+          email: "geekfrontend@gmail.com",
+          name: "GeekFrontend",
+        },
+        token: "dummyToken",
+      };
       setUser(response.user);
-    } else {
+    } catch (err) {
+      console.error(err);
       setError("Failed to register");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-    return response;
   };
 
   const loginUser = async (data: LoginRequest) => {
     setLoading(true);
     setError(null);
-    const response = await login(data);
-    if (response) {
-      setUser(response.data);
-    } else {
+    console.log(data);
+    // Simulate API call
+    try {
+      // Replace with actual login logic
+      const response: LoginResponse = {
+        user: {
+          id: "1",
+          email: "geekfrontend@gmail.com",
+          name: "GeekFrontend",
+        },
+        token: "dummyToken",
+      };
+      setUser(response.user);
+    } catch (err) {
+      console.error(err);
       setError("Failed to login");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-    return response;
   };
 
   const fetchUser = async () => {
     setLoading(true);
-    const response = await getMe();
-    if (response) {
+    setError(null);
+    // Simulate API call
+    try {
+      // Replace with actual fetch user logic
+      const response: GetMeResponse = {
+        id: "1",
+        email: "geekfrontend@gmail.com",
+        name: "GeekFrontend",
+      };
       setUser(response);
-    } else {
-      setError("Failed to fetch user details");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch user");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-    return response;
   };
 
   const logout = () => {
     setUser(null);
-    // Optionally clear tokens here
   };
 
   return (

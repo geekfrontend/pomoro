@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ThemeToggle from "../../../../components/ThemeToggle";
+import LocaleToggle from "../../../../components/LocaleToggle";
 
 const schema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -37,12 +38,10 @@ const Register: React.FC = () => {
 
   const onSubmit = (data: FormData) => {
     console.log(data);
-    // Here you would typically handle the registration logic
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen px-6 bg-white dark:bg-graydark">
-      {/* Welcome Text */}
       <div className="w-full mb-4 text-center">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
           Hi there, Welcome!
@@ -52,12 +51,10 @@ const Register: React.FC = () => {
         </p>
       </div>
 
-      {/* Form */}
       <form
         className="w-full max-w-sm mx-auto"
         onSubmit={handleSubmit(onSubmit)}
       >
-        {/* Name Input */}
         <div className="w-full mb-5">
           <label
             htmlFor="name"
@@ -94,7 +91,6 @@ const Register: React.FC = () => {
           )}
         </div>
 
-        {/* Email Input */}
         <div className="w-full mb-5">
           <label
             htmlFor="email"
@@ -131,7 +127,6 @@ const Register: React.FC = () => {
           )}
         </div>
 
-        {/* Password Input */}
         <div className="mb-5">
           <label
             htmlFor="password"
@@ -168,7 +163,6 @@ const Register: React.FC = () => {
           )}
         </div>
 
-        {/* Register Button */}
         <button
           type="submit"
           disabled={!isValid}
@@ -178,7 +172,6 @@ const Register: React.FC = () => {
         </button>
       </form>
 
-      {/* Login Link */}
       <div className="flex items-center justify-center mt-5 space-x-2">
         <p className="text-gray-900 dark:text-gray-300">
           Already have an account?
@@ -187,9 +180,9 @@ const Register: React.FC = () => {
           Login
         </Link>
       </div>
-      {/* Toggle Theme */}
-      <div className="absolute bottom-6 right-4">
+      <div className="flex items-center justify-between mt-4 space-x-2">
         <ThemeToggle />
+        <LocaleToggle />
       </div>
     </div>
   );
