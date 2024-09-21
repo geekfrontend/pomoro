@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -8,13 +8,14 @@ import LocaleToggle from "../../../../components/LocaleToggle";
 import { useLocale } from "../../../../hooks/useLocale";
 import { useAuth } from "../../../../hooks/useAuth";
 import { schema } from "../schema";
+import Loading from "../../../../components/Loading";
 
 type FormData = z.infer<typeof schema>;
 
 const Login: React.FC = () => {
+  const { loginUser, loading, error, isAuthenticated } = useAuth();
   const [secureEntry, setSecureEntry] = useState(true);
   const { translate } = useLocale();
-  const { loginUser, loading, error } = useAuth();
 
   const navigate = useNavigate();
 
@@ -27,6 +28,12 @@ const Login: React.FC = () => {
     mode: "onChange",
   });
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
+
   const onSubmit = async (data: FormData) => {
     try {
       await loginUser({ email: data.email, password: data.password });
@@ -37,7 +44,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen px-6 bg-white dark:bg-graydark">
+    <div className="flex flex-col items-center justify-center h-screen px-6 bg-white dark:bg-gray-900">
       <div className="w-full mb-4">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
           {translate("welcome")}
@@ -133,7 +140,13 @@ const Login: React.FC = () => {
           disabled={!isValid || loading}
           className="w-full bg-blue-700 text-white font-medium rounded-xl py-2.5 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? <span>Loading...</span> : translate("submit")}
+          {loading ? (
+            <div className="flex items-center justify-center">
+              <Loading />
+            </div>
+          ) : (
+            translate("submit")
+          )}
         </button>
         {error && (
           <p className="mt-2 text-sm text-red-600 dark:text-red-500">{error}</p>

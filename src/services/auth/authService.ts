@@ -23,6 +23,9 @@ export const register = async ({
     return res.data;
   } catch (error) {
     console.error("Failed to register:", error);
+    if (axios.isAxiosError(error)) {
+      return error.response?.data || null;
+    }
     return null;
   }
 };
@@ -39,6 +42,9 @@ export const login = async ({
     return res.data;
   } catch (error) {
     console.error("Failed to login:", error);
+    if (axios.isAxiosError(error)) {
+      return error.response?.data || null;
+    }
     return null;
   }
 };
@@ -51,6 +57,9 @@ export const getMe = async (): Promise<GetMeResponse | null> => {
     return res.data;
   } catch (error) {
     console.error("Failed to fetch user details:", error);
+    if (axios.isAxiosError(error)) {
+      return error.response?.data || null;
+    }
     return null;
   }
 };

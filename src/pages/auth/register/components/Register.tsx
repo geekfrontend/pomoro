@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -7,29 +7,14 @@ import { useAuth } from "../../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../../../../components/ThemeToggle";
 import LocaleToggle from "../../../../components/LocaleToggle";
-
-const schema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" })
-    .regex(/[A-Z]/, {
-      message: "Password must contain at least one uppercase letter",
-    })
-    .regex(/[a-z]/, {
-      message: "Password must contain at least one lowercase letter",
-    })
-    .regex(/[0-9]/, { message: "Password must contain at least one number" })
-    .regex(/[^A-Za-z0-9]/, {
-      message: "Password must contain at least one special character",
-    }),
-});
+import Loading from "../../../../components/Loading";
+import { schema } from "../schema";
 
 type FormData = z.infer<typeof schema>;
 
 const Register: React.FC = () => {
-  const { registerUser, loading, error } = useAuth();
+  const { registerUser, loading, error, isAuthenticated } = useAuth();
+  const [secureEntry, setSecureEntry] = useState(true);
 
   const navigate = useNavigate();
   const {
@@ -40,6 +25,12 @@ const Register: React.FC = () => {
     resolver: zodResolver(schema),
     mode: "onChange",
   });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -55,7 +46,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen px-6 bg-white dark:bg-graydark">
+    <div className="flex flex-col items-center justify-center h-screen px-6 bg-white dark:bg-gray-900">
       <div className="w-full mb-4 text-center">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
           Hi there, Welcome!
@@ -157,7 +148,7 @@ const Register: React.FC = () => {
           <div className="flex items-center px-4 py-2 border rounded-xl dark:bg-gray-800 dark:border-gray-600">
             <i className="text-xl ri-lock-password-fill text-primary"></i>
             <input
-              type="password"
+              type={secureEntry ? "password" : "text"}
               id="password"
               {...register("password")}
               placeholder="••••••••"
@@ -169,6 +160,17 @@ const Register: React.FC = () => {
                   : "text-gray-900 dark:text-gray-300"
               }`}
             />
+            <button
+              type="button"
+              onClick={() => setSecureEntry(!secureEntry)}
+              className="ml-2"
+            >
+              {secureEntry ? (
+                <i className="ri-eye-off-fill"></i>
+              ) : (
+                <i className="ri-eye-fill"></i>
+              )}
+            </button>
           </div>
           {errors.password && (
             <p className="mt-2 text-sm text-red-600 dark:text-red-500">
@@ -182,7 +184,13 @@ const Register: React.FC = () => {
           disabled={!isValid}
           className="w-full bg-blue-700 text-white font-medium rounded-xl py-2.5 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? <span>Loading...</span> : "Register"}
+          {loading ? (
+            <div className="flex items-center justify-center">
+              <Loading />
+            </div>
+          ) : (
+            "Register"
+          )}
         </button>
       </form>
 

@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useState,
-  ReactNode,
-  useEffect,
-  useCallback,
-} from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import { setAccessToken, getAccessToken, removeAccessToken } from "../utils";
 import { login, getMe, register } from "../services/auth/authService";
 import { RegisterRequest, LoginRequest } from "../services/auth/dto";
@@ -26,20 +20,18 @@ interface AuthContextType {
   logout: () => void;
 }
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
 
-export default function AuthProvider({ children }: AuthProviderProps) {
+export default function AuthProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const isAuthenticated = !!user;
 
   const handleApiError = (err: unknown) => {
     console.error(err);
@@ -49,68 +41,54 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     setLoading(false);
   };
 
-  const registerUser = useCallback(async (data: RegisterRequest) => {
+  const executeAuthOperation = async (operation: () => Promise<void>) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await register({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      });
-
-      if (response) {
-        response.message = "User Created";
-        console.log("User created:", response);
-      }
+      await operation();
     } catch (err) {
       handleApiError(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const registerUser = useCallback(async (data: RegisterRequest) => {
+    await executeAuthOperation(async () => {
+      const response = await register(data);
+      if (response) {
+        console.log(response);
+      }
+    });
   }, []);
 
   const fetchUser = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
+    await executeAuthOperation(async () => {
       const response = await getMe();
       if (response) {
         setUser(response.data);
       }
-    } catch (err) {
-      handleApiError(err);
-    } finally {
-      setLoading(false);
-    }
+    });
   }, []);
+
+  const loginUser = useCallback(
+    async (data: LoginRequest) => {
+      await executeAuthOperation(async () => {
+        const response = await login(data);
+        if (response) {
+          setAccessToken(response.data.accessToken);
+          await fetchUser();
+        }
+      });
+    },
+    [fetchUser]
+  );
 
   const logout = useCallback(() => {
     setUser(null);
     removeAccessToken();
     setLoading(false);
   }, []);
-
-  const loginUser = useCallback(
-    async (data: LoginRequest) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await login({
-          email: data.email,
-          password: data.password,
-        });
-        if (response) {
-          response.message = "User logged successfully";
-          setAccessToken(response.data.accessToken);
-          await fetchUser();
-        }
-      } catch (err) {
-        handleApiError(err);
-      }
-    },
-    [fetchUser]
-  );
 
   useEffect(() => {
     const token = getAccessToken();
@@ -121,9 +99,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [fetchUser]);
 
-  const value: AuthContextType = {
+  const contextValue: AuthContextType = {
     user,
-    isAuthenticated,
+    isAuthenticated: !!user,
     loading,
     error,
     registerUser,
@@ -132,5 +110,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     logout,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+  );
 }

@@ -7,6 +7,7 @@ import AuthProvider from "./context/AuthContext.tsx";
 import ThemeProvider from "./context/ThemeContext";
 import LocaleProvider from "./context/LocaleContext.tsx";
 import NoteProvider from "./context/NoteContext.tsx";
+import ToastProvider from "./context/ToastContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -14,9 +15,11 @@ createRoot(document.getElementById("root")!).render(
       <ThemeProvider>
         <LocaleProvider>
           <NoteProvider>
-            <Router>
-              <App />
-            </Router>
+            <ToastProvider>
+              <Router>
+                <App />
+              </Router>
+            </ToastProvider>
           </NoteProvider>
         </LocaleProvider>
       </ThemeProvider>
