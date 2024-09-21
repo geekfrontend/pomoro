@@ -2,7 +2,7 @@ import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 
 const Portal = ({ children }: { children: React.ReactNode }) => {
-  const rootElement = document.getElementById("portal-root");
+  const rootElement = document.getElementById("portal");
   return rootElement ? createPortal(children, rootElement) : null;
 };
 

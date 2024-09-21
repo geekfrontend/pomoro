@@ -54,7 +54,6 @@ const BottomSheet = ({
     setCurrentY(0);
   };
 
-  // Handle clicks on the backdrop
   const handleBackdropClick = () => {
     setIsBottomSheetOpen(false);
   };
