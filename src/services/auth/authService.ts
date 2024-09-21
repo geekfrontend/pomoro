@@ -15,7 +15,7 @@ export const register = async ({
   password,
 }: RegisterRequest): Promise<RegisterResponse | null> => {
   try {
-    const res = await axios.post(`${config.BASE_URL}/auth/register`, {
+    const res = await axios.post(`${config.BASE_URL}/register`, {
       name,
       email,
       password,
@@ -32,7 +32,7 @@ export const login = async ({
   password,
 }: LoginRequest): Promise<LoginResponse | null> => {
   try {
-    const res = await axios.post(`${config.BASE_URL}/auth/login`, {
+    const res = await axios.post(`${config.BASE_URL}/login`, {
       email,
       password,
     });

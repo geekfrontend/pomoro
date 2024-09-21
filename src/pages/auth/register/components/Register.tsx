@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "../../../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../../../../components/ThemeToggle";
 import LocaleToggle from "../../../../components/LocaleToggle";
 
@@ -27,6 +29,9 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const Register: React.FC = () => {
+  const { registerUser, loading, error } = useAuth();
+
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -36,8 +41,17 @@ const Register: React.FC = () => {
     mode: "onChange",
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit = async (data: FormData) => {
+    try {
+      await registerUser({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      });
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -168,9 +182,13 @@ const Register: React.FC = () => {
           disabled={!isValid}
           className="w-full bg-blue-700 text-white font-medium rounded-xl py-2.5 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Register
+          {loading ? <span>Loading...</span> : "Register"}
         </button>
       </form>
+
+      {error && (
+        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{error}</p>
+      )}
 
       <div className="flex items-center justify-center mt-5 space-x-2">
         <p className="text-gray-900 dark:text-gray-300">

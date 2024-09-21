@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
-
-type Locale = "en" | "id";
+import { Locale } from "../types/locale";
 
 const translations: Record<Locale, Record<string, string>> = {
   en: {

@@ -7,23 +7,7 @@ import ThemeToggle from "../../../../components/ThemeToggle";
 import LocaleToggle from "../../../../components/LocaleToggle";
 import { useLocale } from "../../../../context/LocaleContext";
 import { useAuth } from "../../../../context/AuthContext";
-
-const schema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" })
-    .regex(/[A-Z]/, {
-      message: "Password must contain at least one uppercase letter",
-    })
-    .regex(/[a-z]/, {
-      message: "Password must contain at least one lowercase letter",
-    })
-    .regex(/[0-9]/, { message: "Password must contain at least one number" })
-    .regex(/[^A-Za-z0-9]/, {
-      message: "Password must contain at least one special character",
-    }),
-});
+import { schema } from "../schema";
 
 type FormData = z.infer<typeof schema>;
 
@@ -47,8 +31,8 @@ const Login: React.FC = () => {
     try {
       await loginUser({ email: data.email, password: data.password });
       navigate("/");
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.log(error);
     }
   };
 

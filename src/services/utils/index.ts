@@ -1,7 +1,4 @@
-export const getAccessToken = () => localStorage.getItem("accessToken");
-
-export const setAccessToken = (accessToken: string) =>
-  localStorage.setItem("accessToken", accessToken);
+import { getAccessToken } from "../../utils";
 
 export const getHeaders = () => ({
   "Content-Type": "application/json",

@@ -1,141 +1,137 @@
-import { createContext, useState, useContext, ReactNode } from "react";
+import {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+  useCallback,
+} from "react";
+import { setAccessToken, getAccessToken, removeAccessToken } from "../utils";
+import { login, getMe, register } from "../services/auth/authService";
+import { RegisterRequest, LoginRequest } from "../services/auth/dto";
 
-// Define your interfaces as needed
-interface RegisterRequest {
-  name: string;
-  email: string;
-  password: string;
-}
-
-interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-interface GetMeResponse {
+interface User {
   id: string;
-  email: string;
   name: string;
-}
-
-interface LoginResponse {
-  user: GetMeResponse;
-  token: string;
-}
-
-interface RegisterResponse {
-  user: GetMeResponse;
-  token: string;
+  email: string;
 }
 
 interface AuthContextType {
-  user: GetMeResponse | null;
+  user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
-  registerUser: (data: RegisterRequest) => void;
-  loginUser: (data: LoginRequest) => void;
-  fetchUser: () => void;
+  registerUser: (data: RegisterRequest) => Promise<void>;
+  loginUser: (data: LoginRequest) => Promise<void>;
+  fetchUser: () => Promise<void>;
   logout: () => void;
+}
+
+interface AuthProviderProps {
+  children: ReactNode;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<GetMeResponse | null>(null);
-  const [loading, setLoading] = useState(false);
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const isAuthenticated = !!user;
 
-  const registerUser = async (data: RegisterRequest) => {
+  const handleApiError = (err: unknown) => {
+    console.error(err);
+    setError(
+      err instanceof Error ? err.message : "An unexpected error occurred"
+    );
+    setLoading(false);
+  };
+
+  const registerUser = useCallback(async (data: RegisterRequest) => {
     setLoading(true);
     setError(null);
-    console.log(data);
-    // Simulate API call
     try {
-      // Replace with actual register logic
-      const response: RegisterResponse = {
-        user: {
-          id: "1",
-          email: "geekfrontend@gmail.com",
-          name: "GeekFrontend",
-        },
-        token: "dummyToken",
-      };
-      setUser(response.user);
+      const response = await register({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      });
+
+      if (response) {
+        response.message = "User Created";
+        console.log("User created:", response);
+      }
     } catch (err) {
-      console.error(err);
-      setError("Failed to register");
+      handleApiError(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loginUser = async (data: LoginRequest) => {
+  const fetchUser = useCallback(async () => {
     setLoading(true);
     setError(null);
-    console.log(data);
-    // Simulate API call
     try {
-      // Replace with actual login logic
-      const response: LoginResponse = {
-        user: {
-          id: "1",
-          email: "geekfrontend@gmail.com",
-          name: "GeekFrontend",
-        },
-        token: "dummyToken",
-      };
-      setUser(response.user);
+      const response = await getMe();
+      if (response) {
+        setUser(response.data);
+      }
     } catch (err) {
-      console.error(err);
-      setError("Failed to login");
+      handleApiError(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchUser = async () => {
-    setLoading(true);
-    setError(null);
-    // Simulate API call
-    try {
-      // Replace with actual fetch user logic
-      const response: GetMeResponse = {
-        id: "1",
-        email: "geekfrontend@gmail.com",
-        name: "GeekFrontend",
-      };
-      setUser(response);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to fetch user");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
+    removeAccessToken();
+    setLoading(false);
+  }, []);
+
+  const loginUser = useCallback(
+    async (data: LoginRequest) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await login({
+          email: data.email,
+          password: data.password,
+        });
+        if (response) {
+          response.message = "User logged successfully";
+          setAccessToken(response.data.accessToken);
+          await fetchUser();
+        }
+      } catch (err) {
+        handleApiError(err);
+      }
+    },
+    [fetchUser]
+  );
+
+  useEffect(() => {
+    const token = getAccessToken();
+    if (token) {
+      fetchUser();
+    } else {
+      setLoading(false);
+    }
+  }, [fetchUser]);
+
+  const value: AuthContextType = {
+    user,
+    isAuthenticated,
+    loading,
+    error,
+    registerUser,
+    loginUser,
+    fetchUser,
+    logout,
   };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated,
-        loading,
-        error,
-        registerUser,
-        loginUser,
-        fetchUser,
-        logout,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
