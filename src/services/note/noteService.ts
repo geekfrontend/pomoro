@@ -1,5 +1,5 @@
 import { config } from "../../config";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import {
   CreateNoteRequest,
   CreateNoteResponse,
@@ -14,109 +14,60 @@ import { getHeaders } from "../../services/utils";
 
 const BASE_NOTES_URL = `${config.BASE_URL}/notes`;
 
-export const createNote = async ({
-  title,
-  body,
-}: CreateNoteRequest): Promise<CreateNoteResponse | null> => {
+const api = axios.create({
+  baseURL: BASE_NOTES_URL,
+  headers: getHeaders(),
+});
+
+const handleApiError = (error: unknown, operation: string): null => {
+  console.error(`Error ${operation}:`, error);
+  return null;
+};
+
+const makeApiCall = async <T>(
+  apiCall: () => Promise<AxiosResponse<T>>,
+  operation: string
+): Promise<T | null> => {
   try {
-    const res = await axios.post(
-      BASE_NOTES_URL,
-      { title, body },
-      { headers: getHeaders() }
-    );
-    return res.data;
+    const response = await apiCall();
+    return response.data;
   } catch (error) {
-    console.error("Failed to create note:", error);
-    return null;
+    return handleApiError(error, operation);
   }
 };
 
-export const getNotes = async (): Promise<GetNotesResponse | null> => {
-  try {
-    const res = await axios.get(BASE_NOTES_URL, {
-      headers: getHeaders(),
-    });
-    if (res.status === 200) {
-      return res.data;
-    } else {
-      console.warn("Unexpected response status:", res.status);
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching notes:", error);
-    return null;
-  }
-};
+export const createNote = (data: CreateNoteRequest) =>
+  makeApiCall<CreateNoteResponse>(() => api.post("", data), "creating note");
 
-export const getArchivedNotes =
-  async (): Promise<GetArchivedNotesResponse | null> => {
-    try {
-      const res = await axios.get(`${BASE_NOTES_URL}?archived=true`, {
-        headers: getHeaders(),
-      });
-      return res.data;
-    } catch (error) {
-      console.error("Error fetching archived notes:", error);
-      return null;
-    }
-  };
+export const getNotes = () =>
+  makeApiCall<GetNotesResponse>(() => api.get(""), "fetching notes");
 
-export const getNoteById = async (
-  id: string
-): Promise<GetNoteByIdResponse | null> => {
-  try {
-    const res = await axios.get(`${BASE_NOTES_URL}/${id}`, {
-      headers: getHeaders(),
-    });
-    return res.data;
-  } catch (error) {
-    console.error("Error fetching note by ID:", error);
-    return null;
-  }
-};
+export const getArchivedNotes = () =>
+  makeApiCall<GetArchivedNotesResponse>(
+    () => api.get("/archived"),
+    "fetching archived notes"
+  );
 
-export const archiveNote = async (
-  id: string
-): Promise<ArchiveNoteResponse | null> => {
-  try {
-    const res = await axios.post(
-      `${BASE_NOTES_URL}/${id}/archive`,
-      {},
-      { headers: getHeaders() }
-    );
-    return res.data;
-  } catch (error) {
-    console.error("Error archiving note:", error);
-    return null;
-  }
-};
+export const getNoteById = (id: string) =>
+  makeApiCall<GetNoteByIdResponse>(
+    () => api.get(`/${id}`),
+    `fetching note with ID ${id}`
+  );
 
-export const unarchiveNote = async (
-  id: string
-): Promise<UnarchiveNoteResponse | null> => {
-  try {
-    const res = await axios.post(
-      `${BASE_NOTES_URL}/${id}/unarchive`,
-      {},
-      { headers: getHeaders() }
-    );
-    return res.data;
-  } catch (error) {
-    console.error("Error unarchiving note:", error);
-    return null;
-  }
-};
+export const archiveNote = (id: string) =>
+  makeApiCall<ArchiveNoteResponse>(
+    () => api.post(`/${id}/archive`),
+    `archiving note with ID ${id}`
+  );
 
-export const deleteNote = async (
-  id: string
-): Promise<DeleteNoteResponse | null> => {
-  try {
-    const res = await axios.delete(`${BASE_NOTES_URL}/${id}`, {
-      headers: getHeaders(),
-    });
-    return res.data;
-  } catch (error) {
-    console.error("Error deleting note:", error);
-    return null;
-  }
-};
+export const unarchiveNote = (id: string) =>
+  makeApiCall<UnarchiveNoteResponse>(
+    () => api.post(`/${id}/unarchive`),
+    `unarchiving note with ID ${id}`
+  );
+
+export const deleteNote = (id: string) =>
+  makeApiCall<DeleteNoteResponse>(
+    () => api.delete(`/${id}`),
+    `deleting note with ID ${id}`
+  );

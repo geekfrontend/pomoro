@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useState, ReactNode } from "react";
 import { Locale } from "../types/locale";
 
 const translations: Record<Locale, Record<string, string>> = {
@@ -28,7 +28,7 @@ interface LocaleContextProps {
   translate: (key: string) => string;
 }
 
-const LocaleContext = createContext<LocaleContextProps>({
+export const LocaleContext = createContext<LocaleContextProps>({
   currentLocale: "en",
   changeCurrentLocale: () => {},
   translate: (key: string) => key,
@@ -59,5 +59,3 @@ export default function LocaleProvider({ children }: LocaleProviderProps) {
     </LocaleContext.Provider>
   );
 }
-
-export const useLocale = () => useContext(LocaleContext);

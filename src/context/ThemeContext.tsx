@@ -1,17 +1,11 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import { createContext, useState, useEffect, ReactNode } from "react";
 
 interface ThemeContextProps {
   currentTheme: string;
   changeCurrentTheme: (newTheme: string) => void;
 }
 
-const ThemeContext = createContext<ThemeContextProps>({
+export const ThemeContext = createContext<ThemeContextProps>({
   currentTheme: "light",
   changeCurrentTheme: () => {},
 });
@@ -52,5 +46,3 @@ export default function ThemeProvider({ children }: ThemeProviderProps) {
     </ThemeContext.Provider>
   );
 }
-
-export const useThemeProvider = () => useContext(ThemeContext);

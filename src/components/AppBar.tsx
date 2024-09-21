@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import BottomSheet from "./BottomSheet";
-import AddEditNote from "./AddEditNote";
+import AddEditNote from "../pages/home/components/AddEditNote";
 
 const AppBar = () => {
   const { pathname } = useLocation();
@@ -12,8 +12,8 @@ const AppBar = () => {
   };
 
   return (
-    <div className="fixed bottom-0 w-full max-w-[480px] mx-auto backdrop-blur-">
-      <div className="flex items-center justify-between gap-1 px-4 py-2 mx-4 mb-6 bg-white border rounded-full shadow-lg md:mx-16 dark:border-neutral-600 dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400">
+    <div className="fixed bottom-0 w-full max-w-[480px] mx-auto bg-white dark:bg-gray-900">
+      <div className="flex items-center justify-between gap-1 px-4 py-2 mx-4 mb-6 bg-white border border-gray-200 rounded-full dark:bg-gray-700 md:mx-16 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400">
         <Link to="/">
           <button
             data-tooltip-target="tooltip-home"
@@ -40,10 +40,10 @@ const AppBar = () => {
         <button
           data-tooltip-target="tooltip-note"
           type="button"
-          className="inline-flex flex-col items-center justify-center p-3 text-gray-500 "
+          className="inline-flex items-center justify-center w-10 h-10 font-medium bg-blue-600 rounded-full hover:bg-blue-700 group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800"
           onClick={toggleBottomSheet}
         >
-          <i className="text-3xl ri-add-fill"></i>
+          <i className="text-3xl ri-add-fill text-white"></i>
           <span className="sr-only">New Note</span>
         </button>
         <div

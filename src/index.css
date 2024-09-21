@@ -2,12 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-  --bg-dark: #262626;
-  --bg-light: #ffffff;
+.container {
+  @apply border-r-[1px] border-gray-200 dark:border-gray-700 border-l-[1px] min-h-screen dark:bg-gray-700 bg-white;
 }
 
 input,

@@ -66,7 +66,7 @@ const BottomSheet = ({
   return (
     <Portal>
       <div
-        className={`bottom-sheet fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-end transition-opacity duration-300 ease-in-out ${
+        className={`bottom-sheet fixed inset-0 z-50 bg-black bg-opacity-70 flex justify-center items-end transition-opacity duration-300 ease-in-out ${
           isBottomSheetOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
@@ -75,7 +75,7 @@ const BottomSheet = ({
       >
         <div
           ref={sheetRef}
-          className={`bg-white w-full max-w-[480px] rounded-t-lg p-4 transform transition-transform duration-300 ease-in-out ${
+          className={`bg-white w-full  dark:bg-gray-800  max-w-[480px] rounded-t-lg p-4 transform transition-transform duration-300 ease-in-out ${
             isBottomSheetOpen ? "translate-y-0" : "translate-y-full"
           }`}
           onMouseDown={handleDragStart}
@@ -86,7 +86,7 @@ const BottomSheet = ({
           onTouchEnd={handleDragEnd}
           onClick={handleSheetClick}
         >
-          <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4"></div>
+          <div className="w-12 h-1.5 bg-gray-400 rounded-full mx-auto mb-4"></div>
 
           <h2 className="mb-4 text-xl font-semibold">Create New Note</h2>
 

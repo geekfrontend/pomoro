@@ -3,18 +3,16 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PropTypes from "prop-types";
-
-const schema = z.object({
-  title: z.string().min(1, { message: "Title is required" }),
-  body: z.string().min(1, { message: "Body is required" }),
-  archived: z.boolean(),
-});
+import { schema } from "../schema";
+import { useNote } from "../../../hooks/useNote";
+import Loading from "../../../components/Loading";
 
 type FormData = z.infer<typeof schema>;
 
 const AddEditNote: React.FC<{
   setIsBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ setIsBottomSheetOpen }) => {
+  const { addNote, loadingAddNote } = useNote();
   const {
     register,
     handleSubmit,
@@ -25,12 +23,11 @@ const AddEditNote: React.FC<{
     defaultValues: {
       title: "",
       body: "",
-      archived: false,
     },
   });
 
   const onSubmit = (data: FormData) => {
-    console.log(data);
+    addNote({ title: data.title, body: data.body });
     reset();
     setIsBottomSheetOpen(false);
   };
@@ -41,7 +38,7 @@ const AddEditNote: React.FC<{
         <div>
           <label
             htmlFor="title"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white "
           >
             Title
           </label>
@@ -78,25 +75,18 @@ const AddEditNote: React.FC<{
             <p className="text-sm text-red-500">{errors.body.message}</p>
           )}
         </div>
-        <div className="flex items-center justify-end mt-2">
-          <input
-            type="checkbox"
-            id="archived"
-            {...register("archived")}
-            className="mr-2"
-          />
-          <label
-            htmlFor="archived"
-            className="text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Archived
-          </label>
-        </div>
+
         <button
           type="submit"
           className="mt-6 w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
         >
-          Submit
+          {loadingAddNote ? (
+            <div className="flex justify-center">
+              <Loading />
+            </div>
+          ) : (
+            "Save"
+          )}
         </button>
       </form>
     </>

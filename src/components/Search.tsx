@@ -1,7 +1,6 @@
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 const Search = () => {
-  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("search") || "";
 
@@ -65,28 +64,6 @@ const Search = () => {
             </div>
           </div>
         </form>
-      </div>
-      <div className="max-w-[480px] mx-auto p-2">
-        <Link
-          className={`${
-            location.pathname === "/"
-              ? "bg-blue-100 text-blue-800"
-              : "bg-gray-100 text-gray-800"
-          } text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300`}
-          to={"/"}
-        >
-          Active
-        </Link>
-        <Link
-          className={`${
-            location.pathname === "/notes/archive"
-              ? "bg-blue-100 text-blue-800"
-              : "bg-gray-100 text-gray-800"
-          } text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300`}
-          to={"/notes/archive"}
-        >
-          Archive
-        </Link>
       </div>
     </div>
   );

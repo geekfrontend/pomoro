@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import AppBar from "../AppBar";
 
@@ -32,7 +32,7 @@ const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   return (
     <>
       <AppBar />
-      {children}
+      <div className="bg-white dark:bg-gray-900">{children}</div>
     </>
   );
 };

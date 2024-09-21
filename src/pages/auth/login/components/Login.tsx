@@ -5,8 +5,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ThemeToggle from "../../../../components/ThemeToggle";
 import LocaleToggle from "../../../../components/LocaleToggle";
-import { useLocale } from "../../../../context/LocaleContext";
-import { useAuth } from "../../../../context/AuthContext";
+import { useLocale } from "../../../../hooks/useLocale";
+import { useAuth } from "../../../../hooks/useAuth";
 import { schema } from "../schema";
 
 type FormData = z.infer<typeof schema>;

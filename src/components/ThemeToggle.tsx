@@ -1,7 +1,7 @@
-import { useThemeProvider } from "../context/ThemeContext";
+import { useTheme } from "../hooks/useTheme";
 
 export default function ThemeToggle() {
-  const { currentTheme, changeCurrentTheme } = useThemeProvider();
+  const { currentTheme, changeCurrentTheme } = useTheme();
 
   return (
     <div>

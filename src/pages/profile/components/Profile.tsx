@@ -3,7 +3,8 @@ import UserInformation from "./UserInformation";
 import DefaultLayout from "../../../components/layout/DefaultLayout";
 import ThemeToggle from "../../../components/ThemeToggle";
 import LocaleToggle from "../../../components/LocaleToggle";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../hooks/useAuth";
+
 const Profile = () => {
   const { logout } = useAuth();
   return (
@@ -14,7 +15,7 @@ const Profile = () => {
           <UserInformation />
           <div className="mx-auto space-y-2 w-full mt-2 max-w-[95%]">
             <span className="ml-3 text-sm text-neutral-500">Theme</span>
-            <div className="p-1 bg-neutral-100 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 rounded-xl">
+            <div className="px-5 py-1 mb-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg me-2 focus:outline-none hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
               <div className="flex items-center justify-between p-3">
                 <span>Dark Mode</span>
                 <ThemeToggle />
@@ -23,17 +24,17 @@ const Profile = () => {
           </div>
           <div className="mx-auto space-y-2 w-full mt-2 max-w-[95%]">
             <span className="ml-3 text-sm text-neutral-500">Language</span>
-            <div className="p-1 bg-neutral-100 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 rounded-xl">
+            <div className="px-5 py-1 mb-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg me-2 focus:outline-none hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
               <div className="flex items-center justify-between p-3">
                 <span>English</span>
                 <LocaleToggle />
               </div>
             </div>
           </div>
-          <div className="mx-auto space-y-2 w-full mt-4 max-w-[95%] ">
+          <div className="mx-auto space-y-2 w-full mt-8 max-w-[95%] ">
             <div
               onClick={() => logout()}
-              className="p-1 text-white bg-red-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 rounded-xl"
+              className="px-5 py-1 mb-2 text-sm font-medium text-white bg-red-700 rounded-lg cursor-pointer focus:outline-none hover:bg-red-800 focus:ring-4 focus:ring-red-300 me-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 "
             >
               <div className="flex items-center justify-center p-3 space-x-2 ">
                 <span>Keluar</span>
@@ -44,7 +45,7 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="pb-10 mt-2 space-y-2 text-sm text-center text-neutral-400 dark:text-neutral-600">
+          <div className="pb-10 mt-4 space-y-2 text-sm font-semibold text-center text-neutral-400 dark:text-neutral-600">
             Pomoro v1.0 Beta
           </div>
         </div>

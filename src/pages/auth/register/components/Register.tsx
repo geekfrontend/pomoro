@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "../../../../context/AuthContext";
+import { useAuth } from "../../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../../../../components/ThemeToggle";
 import LocaleToggle from "../../../../components/LocaleToggle";
