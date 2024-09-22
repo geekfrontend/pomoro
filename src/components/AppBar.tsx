@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useLocale } from "../hooks/useLocale";
 import BottomSheet from "./BottomSheet";
 import AddEditNote from "../pages/home/components/AddEditNote";
 
 const AppBar = () => {
   const { pathname } = useLocation();
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const { translate } = useLocale();
 
   const toggleBottomSheet = () => {
     setIsBottomSheetOpen(!isBottomSheetOpen);
@@ -25,7 +27,7 @@ const AppBar = () => {
               }`}
           >
             <i className="ri-home-fill"></i>
-            <div className="text-sm font-medium">Home</div>
+            <div className="text-sm font-medium">{translate("home")}</div>
           </button>
           <div
             id="tooltip-home"
@@ -43,15 +45,15 @@ const AppBar = () => {
           className="inline-flex items-center justify-center w-10 h-10 font-medium bg-blue-600 rounded-full hover:bg-blue-700 group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800"
           onClick={toggleBottomSheet}
         >
-          <i className="text-3xl ri-add-fill text-white"></i>
-          <span className="sr-only">New Note</span>
+          <i className="text-3xl text-white ri-add-fill"></i>
+          <span className="sr-only">{translate("newNote")}</span>
         </button>
         <div
           id="tooltip-note"
           role="tooltip"
           className="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
         >
-          Create a new note
+          {translate("createNewNote")}
           <div className="tooltip-arrow" data-popper-arrow></div>
         </div>
 
@@ -66,7 +68,7 @@ const AppBar = () => {
               }`}
           >
             <i className="ri-user-fill"></i>
-            <div className="text-sm font-medium">Profile</div>
+            <div className="text-sm font-medium">{translate("profile")}</div>
           </button>
           <div
             id="tooltip-profile"

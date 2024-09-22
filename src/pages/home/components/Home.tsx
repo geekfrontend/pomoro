@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNote } from "../../../hooks/useNote";
+import { useLocale } from "../../../hooks/useLocale";
+import { useSearchParams } from "react-router-dom";
 import Header from "../../../components/Header";
 import Search from "../../../components/Search";
 import DefaultLayout from "../../../components/layout/DefaultLayout";
@@ -7,15 +9,25 @@ import NoteItem from "./NoteItem";
 
 const Home = () => {
   const { fetchNotes, notes, archivedNotes, fetchArchivedNotes } = useNote();
-
   const [activeTab, setActiveTab] = useState<"active" | "archive">("active");
+  const { translate } = useLocale();
+  const [searchParams] = useSearchParams();
+
+  const query = searchParams.get("search")?.toLowerCase() || "";
 
   useEffect(() => {
     fetchNotes();
     fetchArchivedNotes();
   }, [fetchNotes, fetchArchivedNotes]);
 
-  const renderNotes = activeTab === "active" ? notes : archivedNotes;
+  const renderNotes = useMemo(() => {
+    const currentNotes = activeTab === "active" ? notes : archivedNotes;
+    if (!query) return currentNotes;
+
+    return currentNotes?.filter((note) =>
+      note.title.toLowerCase().includes(query)
+    );
+  }, [notes, archivedNotes, activeTab, query]);
 
   const getTabClass = (tab: "active" | "archive") =>
     activeTab === tab
@@ -24,7 +36,7 @@ const Home = () => {
 
   return (
     <DefaultLayout>
-      <Header title="Pomoro" />
+      <Header title={`${translate("appName")}`} />
       <Search />
 
       <div className="max-w-[480px]  mx-auto p-2">
@@ -34,7 +46,7 @@ const Home = () => {
             "active"
           )}`}
         >
-          Active
+          {translate("active")}
         </button>
         <button
           onClick={() => setActiveTab("archive")}
@@ -42,12 +54,14 @@ const Home = () => {
             "archive"
           )}`}
         >
-          Archive
+          {translate("archive")}
         </button>
       </div>
 
       {renderNotes?.length === 0 ? (
-        <div className="text-center text-gray-500">No notes found</div>
+        <div className="text-center text-gray-500">
+          {translate("notesNotFound")}
+        </div>
       ) : (
         <div className="grid pb-32 grid-cols-1 p-2 gap-4 max-w-[480px] mx-auto">
           {renderNotes?.map((note) => (

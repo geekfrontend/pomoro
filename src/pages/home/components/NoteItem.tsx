@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { showFormattedDate } from "../../../utils/data";
 import { useNote } from "../../../hooks/useNote";
 import Loading from "../../../components/Loading";
+import { useLocale } from "../../../hooks/useLocale";
 
 interface NoteProps {
   note: {
@@ -22,6 +23,7 @@ const NoteItem = ({ note }: NoteProps) => {
     loadingArchiveNoteId,
     loadingDeleteNoteId,
   } = useNote();
+  const { translate, currentLocale } = useLocale();
 
   const handleArchiveToggle = async () => {
     if (archived) {
@@ -39,7 +41,12 @@ const NoteItem = ({ note }: NoteProps) => {
       <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
         {title}
       </h5>
-      <span>{showFormattedDate(createdAt)}</span>
+      <span>
+        {showFormattedDate(
+          createdAt,
+          currentLocale === "en" ? "en-US" : "id-ID"
+        )}
+      </span>
       <p className="mb-3 text-base font-normal text-justify text-gray-500 dark:text-gray-400">
         {body.length > 100 ? `${body.slice(0, 100)}...` : body}
       </p>
@@ -81,7 +88,7 @@ const NoteItem = ({ note }: NoteProps) => {
           to={`/notes/${id}`}
           className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
-          Read more
+          {translate("readMore")}
           <svg
             className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
             xmlns="http://www.w3.org/2000/svg"

@@ -108,7 +108,7 @@ const searchNotes = (query: string): Note[] => {
     note.title.toLowerCase().includes(query.toLowerCase())
   );
 };
-const showFormattedDate = (date: string): string => {
+const showFormattedDate = (date: string, locale: "en-US" | "id-ID"): string => {
   try {
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
@@ -121,7 +121,7 @@ const showFormattedDate = (date: string): string => {
       throw new Error("Invalid date");
     }
 
-    return parsedDate.toLocaleDateString("en-US", options);
+    return parsedDate.toLocaleDateString(locale, options);
   } catch (error) {
     console.error(error);
     return "Invalid date";

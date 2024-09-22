@@ -9,12 +9,14 @@ import ThemeToggle from "../../../../components/ThemeToggle";
 import LocaleToggle from "../../../../components/LocaleToggle";
 import Loading from "../../../../components/Loading";
 import { schema } from "../schema";
+import { useLocale } from "../../../../hooks/useLocale";
 
 type FormData = z.infer<typeof schema>;
 
 const Register: React.FC = () => {
   const { registerUser, loading, error, isAuthenticated } = useAuth();
   const [secureEntry, setSecureEntry] = useState(true);
+  const { translate } = useLocale();
 
   const navigate = useNavigate();
   const {
@@ -49,13 +51,17 @@ const Register: React.FC = () => {
     <div className="flex flex-col items-center justify-center h-screen px-6 bg-white dark:bg-gray-900">
       <div className="w-full mb-4 text-center">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
-          Hi there, Welcome!
+          {translate("welcome")}
         </h1>
         <p className="font-medium text-gray-500 dark:text-gray-300">
-          Pomoro is a simple pomodoro app
+          {translate("definitionPomoro")}
         </p>
       </div>
-
+      {error && (
+        <p className="my-2 text-sm text-center text-red-600 dark:text-red-500">
+          {error}
+        </p>
+      )}
       <form
         className="w-full max-w-sm mx-auto"
         onSubmit={handleSubmit(onSubmit)}
@@ -71,7 +77,7 @@ const Register: React.FC = () => {
                 : "text-gray-900 dark:text-gray-300"
             }`}
           >
-            Name
+            {translate("name")}
           </label>
           <div className="flex items-center px-4 py-2 border rounded-xl dark:bg-gray-800 dark:border-gray-600">
             <i className="text-xl ri-user-fill text-primary"></i>
@@ -79,7 +85,7 @@ const Register: React.FC = () => {
               type="text"
               id="name"
               {...register("name")}
-              placeholder="Your Name"
+              placeholder={`${translate("placeholderName")}`}
               className={`flex-1 bg-transparent focus:outline-none p-2.5 ${
                 dirtyFields.name && !errors.name
                   ? "text-green-900 dark:text-green-500 placeholder-green-700 dark:placeholder-green-500"
@@ -107,7 +113,7 @@ const Register: React.FC = () => {
                 : "text-gray-900 dark:text-gray-300"
             }`}
           >
-            Email
+            {translate("email")}
           </label>
           <div className="flex items-center px-4 py-2 border rounded-xl dark:bg-gray-800 dark:border-gray-600">
             <i className="text-xl ri-mail-fill text-primary"></i>
@@ -115,7 +121,7 @@ const Register: React.FC = () => {
               type="email"
               id="email"
               {...register("email")}
-              placeholder="name@example.com"
+              placeholder={`${translate("placeholderEmail")}`}
               className={`flex-1 bg-transparent focus:outline-none p-2.5 ${
                 dirtyFields.email && !errors.email
                   ? "text-green-900 dark:text-green-500 placeholder-green-700 dark:placeholder-green-500"
@@ -143,7 +149,7 @@ const Register: React.FC = () => {
                 : "text-gray-900 dark:text-gray-300"
             }`}
           >
-            Password
+            {translate("password")}
           </label>
           <div className="flex items-center px-4 py-2 border rounded-xl dark:bg-gray-800 dark:border-gray-600">
             <i className="text-xl ri-lock-password-fill text-primary"></i>
@@ -189,21 +195,17 @@ const Register: React.FC = () => {
               <Loading />
             </div>
           ) : (
-            "Register"
+            <> {translate("register")}</>
           )}
         </button>
       </form>
 
-      {error && (
-        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{error}</p>
-      )}
-
       <div className="flex items-center justify-center mt-5 space-x-2">
         <p className="text-gray-900 dark:text-gray-300">
-          Already have an account?
+          {translate("alreadyHaveAccount")}
         </p>
         <Link to="/login" className="text-blue-700 dark:text-blue-500">
-          Login
+          {translate("login")}
         </Link>
       </div>
       <div className="flex items-center justify-between mt-4 space-x-2">

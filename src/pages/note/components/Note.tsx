@@ -5,9 +5,11 @@ import DefaultLayout from "../../../components/layout/DefaultLayout";
 import { showFormattedDate } from "../../../utils/data";
 import { useEffect } from "react";
 import Loading from "../../../components/Loading";
+import { useLocale } from "../../../hooks/useLocale";
 
 const NotePage = () => {
   const { id } = useParams<string>();
+  const { translate, currentLocale } = useLocale();
 
   const navigate = useNavigate();
   const { fetchNoteById, loading, note } = useNote();
@@ -25,7 +27,7 @@ const NotePage = () => {
   return (
     <>
       <DefaultLayout>
-        <Header onBack={handleBack} title="Note" />
+        <Header onBack={handleBack} title={`${translate("note")}`} />
         {loading ? (
           <div className="flex items-center justify-center">
             <Loading />
@@ -39,7 +41,10 @@ const NotePage = () => {
                     {note.title}
                   </h1>
                   <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                    {showFormattedDate(note.createdAt)}
+                    {showFormattedDate(
+                      note.createdAt,
+                      currentLocale === "en" ? "en-US" : "id-ID"
+                    )}
                   </p>
                   <p className="mb-3 text-justify text-gray-500 dark:text-gray-400">
                     {note.body}
@@ -48,7 +53,7 @@ const NotePage = () => {
               </>
             ) : (
               <p className="text-center text-gray-500 dark:text-gray-400">
-                Note not found
+                {translate("noteNotFound")}
               </p>
             )}
           </>

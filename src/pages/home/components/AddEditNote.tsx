@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import { schema } from "../schema";
 import { useNote } from "../../../hooks/useNote";
 import Loading from "../../../components/Loading";
+import { useLocale } from "../../../hooks/useLocale";
 
 type FormData = z.infer<typeof schema>;
 
@@ -25,6 +26,7 @@ const AddEditNote: React.FC<{
       body: "",
     },
   });
+  const { translate } = useLocale();
 
   const onSubmit = (data: FormData) => {
     addNote({ title: data.title, body: data.body });
@@ -40,7 +42,7 @@ const AddEditNote: React.FC<{
             htmlFor="title"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white "
           >
-            Title
+            {translate("title")}
           </label>
           <input
             type="text"
@@ -49,7 +51,7 @@ const AddEditNote: React.FC<{
             className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
               errors.title ? "border-red-500" : "border-gray-300"
             }`}
-            placeholder="Title"
+            placeholder={`${translate("placeholderTitle")}`}
           />
           {errors.title && (
             <p className="text-sm text-red-500">{errors.title.message}</p>
@@ -60,7 +62,7 @@ const AddEditNote: React.FC<{
             htmlFor="body"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >
-            Body
+            {translate("description")}
           </label>
           <textarea
             id="body"
@@ -69,7 +71,7 @@ const AddEditNote: React.FC<{
             className={`block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
               errors.body ? "border-red-500" : "border-gray-300"
             }`}
-            placeholder="Write your note here..."
+            placeholder={`${translate("placeholderDescription")}`}
           ></textarea>
           {errors.body && (
             <p className="text-sm text-red-500">{errors.body.message}</p>
@@ -85,7 +87,7 @@ const AddEditNote: React.FC<{
               <Loading />
             </div>
           ) : (
-            "Save"
+            `${translate("save")}`
           )}
         </button>
       </form>

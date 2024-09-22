@@ -47,7 +47,7 @@ const Login: React.FC = () => {
     <div className="flex flex-col items-center justify-center h-screen px-6 bg-white dark:bg-gray-900">
       <div className="w-full mb-4">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
-          {translate("welcome")}
+          {translate("welcomeBack")}
         </h1>
       </div>
 
@@ -71,7 +71,7 @@ const Login: React.FC = () => {
               type="email"
               id="email"
               {...register("email")}
-              placeholder="name@example.com"
+              placeholder={`${translate("placeholderEmail")}`}
               className={`flex-1 bg-transparent focus:outline-none p-2.5 ${
                 dirtyFields.email && !errors.email
                   ? "text-green-900 dark:text-green-500 placeholder-green-700 dark:placeholder-green-500"
@@ -145,7 +145,7 @@ const Login: React.FC = () => {
               <Loading />
             </div>
           ) : (
-            translate("submit")
+            translate("login")
           )}
         </button>
         {error && (
@@ -158,7 +158,7 @@ const Login: React.FC = () => {
           {translate("noAccount")}
         </p>
         <Link to="/register" className="text-blue-700 dark:text-blue-500">
-          {translate("signUp")}
+          {translate("register")}
         </Link>
       </div>
       <div className="flex items-center justify-between mt-4 space-x-2">

@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import Portal from "./Portal";
 import PropTypes from "prop-types";
+import { useLocale } from "../hooks/useLocale";
 
 const BottomSheet = ({
   children,
@@ -15,6 +16,7 @@ const BottomSheet = ({
   const [startY, setStartY] = useState(0);
   const [currentY, setCurrentY] = useState(0);
   const sheetRef = useRef<HTMLDivElement | null>(null);
+  const { translate } = useLocale();
 
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     setDragging(true);
@@ -87,7 +89,9 @@ const BottomSheet = ({
         >
           <div className="w-12 h-1.5 bg-gray-400 rounded-full mx-auto mb-4"></div>
 
-          <h2 className="mb-4 text-xl font-semibold">Create New Note</h2>
+          <h2 className="mb-4 text-xl font-semibold">
+            {translate("createNewNote")}
+          </h2>
 
           <div>{children}</div>
         </div>
