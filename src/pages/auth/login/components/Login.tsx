@@ -9,13 +9,15 @@ import { useLocale } from "../../../../hooks/useLocale";
 import { useAuth } from "../../../../hooks/useAuth";
 import { schema } from "../schema";
 import Loading from "../../../../components/Loading";
+import { useToast } from "../../../../hooks/useToast";
 
 type FormData = z.infer<typeof schema>;
 
 const Login: React.FC = () => {
-  const { loginUser, loading, error, isAuthenticated } = useAuth();
+  const { loginUser, isLoading, message, isAuthenticated, status } = useAuth();
   const [secureEntry, setSecureEntry] = useState(true);
   const { translate } = useLocale();
+  const { success, error: errorToast } = useToast();
 
   const navigate = useNavigate();
 
@@ -35,11 +37,12 @@ const Login: React.FC = () => {
   }, [isAuthenticated, navigate]);
 
   const onSubmit = async (data: FormData) => {
-    try {
-      await loginUser({ email: data.email, password: data.password });
-      navigate("/");
-    } catch (error) {
-      console.log(error);
+    await loginUser({ email: data.email, password: data.password });
+
+    if (status === "fail") {
+      errorToast(translate("loginError"));
+    } else if (status === "success") {
+      success(translate("loginSuccess"));
     }
   };
 
@@ -50,7 +53,13 @@ const Login: React.FC = () => {
           {translate("welcomeBack")}
         </h1>
       </div>
-
+      {message && (
+        <p className="my-2 text-sm text-center text-red-600 dark:text-red-500">
+          {message === "Password is wrong"
+            ? `${translate("passwordIncorrect")}`
+            : `${translate("emailNotFound")}`}
+        </p>
+      )}
       <form className="w-full mx-auto" onSubmit={handleSubmit(onSubmit)}>
         <div className="w-full mb-5">
           <label
@@ -137,10 +146,10 @@ const Login: React.FC = () => {
 
         <button
           type="submit"
-          disabled={!isValid || loading}
+          disabled={!isValid || isLoading}
           className="w-full bg-blue-700 text-white font-medium rounded-xl py-2.5 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? (
+          {isLoading ? (
             <div className="flex items-center justify-center">
               <Loading />
             </div>
@@ -148,9 +157,6 @@ const Login: React.FC = () => {
             translate("login")
           )}
         </button>
-        {error && (
-          <p className="mt-2 text-sm text-red-600 dark:text-red-500">{error}</p>
-        )}
       </form>
 
       <div className="flex items-center justify-center mt-5 space-x-2">

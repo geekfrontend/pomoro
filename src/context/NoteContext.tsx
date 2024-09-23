@@ -15,6 +15,7 @@ import {
   getNoteById,
 } from "../services/note/noteService";
 import { CreateNoteRequest, GetNotesResponse } from "../services/note/dto";
+import { getAccessToken } from "../utils";
 
 interface Note {
   id: string;
@@ -195,8 +196,11 @@ export default function NotesProvider({ children }: NotesProviderProps) {
   }, []);
 
   useEffect(() => {
-    fetchNotes();
-  }, [fetchNotes]);
+    const token = getAccessToken();
+    if (token) {
+      fetchNotes();
+    }
+  }, []);
 
   const value = {
     notes,

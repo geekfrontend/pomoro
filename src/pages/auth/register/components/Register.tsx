@@ -10,13 +10,16 @@ import LocaleToggle from "../../../../components/LocaleToggle";
 import Loading from "../../../../components/Loading";
 import { schema } from "../schema";
 import { useLocale } from "../../../../hooks/useLocale";
+import { useToast } from "../../../../hooks/useToast";
 
 type FormData = z.infer<typeof schema>;
 
 const Register: React.FC = () => {
-  const { registerUser, loading, error, isAuthenticated } = useAuth();
+  const { registerUser, isLoading, isAuthenticated, status, message } =
+    useAuth();
   const [secureEntry, setSecureEntry] = useState(true);
   const { translate } = useLocale();
+  const { success, error: errorToast } = useToast();
 
   const navigate = useNavigate();
   const {
@@ -35,15 +38,16 @@ const Register: React.FC = () => {
   }, [isAuthenticated, navigate]);
 
   const onSubmit = async (data: FormData) => {
-    try {
-      await registerUser({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      });
+    await registerUser({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+    });
+    if (status === "fail") {
+      errorToast(translate("registerError"));
+    } else if (status === "success") {
+      success(translate("registerSuccess"));
       navigate("/login");
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -57,9 +61,9 @@ const Register: React.FC = () => {
           {translate("definitionPomoro")}
         </p>
       </div>
-      {error && (
+      {message && (
         <p className="my-2 text-sm text-center text-red-600 dark:text-red-500">
-          {error}
+          {message === "Email already use" && translate("emailAlreadyExists")}
         </p>
       )}
       <form
@@ -187,10 +191,10 @@ const Register: React.FC = () => {
 
         <button
           type="submit"
-          disabled={!isValid}
+          disabled={!isValid || isLoading}
           className="w-full bg-blue-700 text-white font-medium rounded-xl py-2.5 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? (
+          {isLoading ? (
             <div className="flex items-center justify-center">
               <Loading />
             </div>
