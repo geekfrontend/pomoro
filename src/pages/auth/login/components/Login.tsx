@@ -9,16 +9,13 @@ import { useLocale } from "../../../../hooks/useLocale";
 import { useAuth } from "../../../../hooks/useAuth";
 import { schema } from "../schema";
 import Loading from "../../../../components/Loading";
-import { useToast } from "../../../../hooks/useToast";
 
 type FormData = z.infer<typeof schema>;
 
 const Login: React.FC = () => {
-  const { loginUser, isLoading, message, isAuthenticated, status } = useAuth();
+  const { loginUser, isLoading, message, isAuthenticated } = useAuth();
   const [secureEntry, setSecureEntry] = useState(true);
   const { translate } = useLocale();
-  const { success, error: errorToast } = useToast();
-
   const navigate = useNavigate();
 
   const {
@@ -38,12 +35,6 @@ const Login: React.FC = () => {
 
   const onSubmit = async (data: FormData) => {
     await loginUser({ email: data.email, password: data.password });
-
-    if (status === "fail") {
-      errorToast(translate("loginError"));
-    } else if (status === "success") {
-      success(translate("loginSuccess"));
-    }
   };
 
   return (
@@ -54,12 +45,17 @@ const Login: React.FC = () => {
         </h1>
       </div>
       {message && (
-        <p className="my-2 text-sm text-center text-red-600 dark:text-red-500">
+        <p className="w-full p-4 mb-4 text-sm font-semibold text-center text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400">
           {message === "Password is wrong"
-            ? `${translate("passwordIncorrect")}`
-            : `${translate("emailNotFound")}`}
+            ? translate("passwordIncorrect")
+            : message === "Email not found"
+            ? translate("emailNotFound")
+            : message === "Invalid token structure"
+            ? translate("invalidTokenStructure")
+            : translate("unknownError")}
         </p>
       )}
+
       <form className="w-full mx-auto" onSubmit={handleSubmit(onSubmit)}>
         <div className="w-full mb-5">
           <label

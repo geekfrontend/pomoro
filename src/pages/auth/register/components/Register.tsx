@@ -62,14 +62,15 @@ const Register: React.FC = () => {
         </p>
       </div>
       {message && (
-        <p className="my-2 text-sm text-center text-red-600 dark:text-red-500">
-          {message === "Email already use" && translate("emailAlreadyExists")}
+        <p className="w-full p-4 mb-4 text-sm font-semibold text-center text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400">
+          {message === "Email already use"
+            ? translate("emailAlreadyExists")
+            : message === "Invalid token structure"
+            ? translate("invalidTokenStructure")
+            : translate("unknownError")}
         </p>
       )}
-      <form
-        className="w-full max-w-sm mx-auto"
-        onSubmit={handleSubmit(onSubmit)}
-      >
+      <form className="w-full mx-auto" onSubmit={handleSubmit(onSubmit)}>
         <div className="w-full mb-5">
           <label
             htmlFor="name"

@@ -10,13 +10,12 @@ import {
   UnarchiveNoteResponse,
   DeleteNoteResponse,
 } from "./dto";
-import { getHeaders } from "../../services/utils";
+import { getHeadersWIthToken } from "../../services/utils";
 
 const BASE_NOTES_URL = `${config.BASE_URL}/notes`;
 
 const api = axios.create({
   baseURL: BASE_NOTES_URL,
-  headers: getHeaders(),
 });
 
 const handleApiError = (error: unknown, operation: string): null => {
@@ -36,38 +35,46 @@ const makeApiCall = async <T>(
   }
 };
 
-export const createNote = (data: CreateNoteRequest) =>
-  makeApiCall<CreateNoteResponse>(() => api.post("", data), "creating note");
+export const createNote = (data: CreateNoteRequest, token: string) =>
+  makeApiCall<CreateNoteResponse>(
+    () => api.post("", data, { headers: getHeadersWIthToken(token) }),
+    "creating note"
+  );
 
-export const getNotes = () =>
-  makeApiCall<GetNotesResponse>(() => api.get(""), "fetching notes");
+export const getNotes = (token: string) =>
+  makeApiCall<GetNotesResponse>(
+    () => api.get("", { headers: getHeadersWIthToken(token) }),
+    "fetching notes"
+  );
 
-export const getArchivedNotes = () =>
+export const getArchivedNotes = (token: string) =>
   makeApiCall<GetArchivedNotesResponse>(
-    () => api.get("/archived"),
+    () => api.get("/archived", { headers: getHeadersWIthToken(token) }),
     "fetching archived notes"
   );
 
-export const getNoteById = (id: string) =>
+export const getNoteById = (id: string, token: string) =>
   makeApiCall<GetNoteByIdResponse>(
-    () => api.get(`/${id}`),
+    () => api.get(`/${id}`, { headers: getHeadersWIthToken(token) }),
     `fetching note with ID ${id}`
   );
 
-export const archiveNote = (id: string) =>
+export const archiveNote = (id: string, token: string) =>
   makeApiCall<ArchiveNoteResponse>(
-    () => api.post(`/${id}/archive`),
+    () =>
+      api.post(`/${id}/archive`, {}, { headers: getHeadersWIthToken(token) }),
     `archiving note with ID ${id}`
   );
 
-export const unarchiveNote = (id: string) =>
+export const unarchiveNote = (id: string, token: string) =>
   makeApiCall<UnarchiveNoteResponse>(
-    () => api.post(`/${id}/unarchive`),
+    () =>
+      api.post(`/${id}/unarchive`, {}, { headers: getHeadersWIthToken(token) }),
     `unarchiving note with ID ${id}`
   );
 
-export const deleteNote = (id: string) =>
+export const deleteNote = (id: string, token: string) =>
   makeApiCall<DeleteNoteResponse>(
-    () => api.delete(`/${id}`),
+    () => api.delete(`/${id}`, { headers: getHeadersWIthToken(token) }),
     `deleting note with ID ${id}`
   );

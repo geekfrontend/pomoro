@@ -47,6 +47,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     registerSuccess: "Registration successful",
     registerError: "Registration failed",
     emailAlreadyExists: "Email already exists",
+    notFound: "Not found",
+    unknownError: "Unknown error",
+    invalidTokenStructure: "Please login again",
   },
   id: {
     appName: "Pomoro",
@@ -94,5 +97,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     registerSuccess: "Pendaftaran berhasil",
     registerError: "Pendaftaran gagal",
     emailAlreadyExists: "Email sudah terdaftar",
+    notFound: "Tidak ditemukan",
+    unknownError: "Error tidak diketahui",
+    invalidTokenStructure: "Silahkan login kembali",
   },
 };

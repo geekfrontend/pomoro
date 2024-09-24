@@ -7,3 +7,8 @@ export const getHeaders = () => ({
   "Content-Type": "application/json",
   Authorization: `Bearer ${getAccessToken()}`,
 });
+
+export const getHeadersWIthToken = (token: string) => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${token}`,
+});

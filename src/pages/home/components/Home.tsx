@@ -6,9 +6,13 @@ import Header from "../../../components/Header";
 import Search from "../../../components/Search";
 import DefaultLayout from "../../../components/layout/DefaultLayout";
 import NoteItem from "./NoteItem";
+import { useAuth } from "../../../hooks/useAuth";
+import Loading from "../../../components/Loading";
 
 const Home = () => {
-  const { fetchNotes, notes, archivedNotes, fetchArchivedNotes } = useNote();
+  const { isAuthenticated } = useAuth();
+  const { fetchNotes, notes, archivedNotes, fetchArchivedNotes, loading } =
+    useNote();
   const [activeTab, setActiveTab] = useState<"active" | "archive">("active");
   const { translate } = useLocale();
   const [searchParams] = useSearchParams();
@@ -16,17 +20,28 @@ const Home = () => {
   const query = searchParams.get("search")?.toLowerCase() || "";
 
   useEffect(() => {
-    fetchNotes();
-    fetchArchivedNotes();
+    if (isAuthenticated) {
+      fetchNotes();
+      fetchArchivedNotes();
+    }
   }, [fetchNotes, fetchArchivedNotes]);
 
   const renderNotes = useMemo(() => {
     const currentNotes = activeTab === "active" ? notes : archivedNotes;
-    if (!query) return currentNotes;
 
-    return currentNotes?.filter((note) =>
-      note.title.toLowerCase().includes(query)
-    );
+    if (!currentNotes) return [];
+    if (!query)
+      return currentNotes.sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+
+    return currentNotes
+      .filter((note) => note.title.toLowerCase().includes(query.toLowerCase()))
+      .sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
   }, [notes, archivedNotes, activeTab, query]);
 
   const getTabClass = (tab: "active" | "archive") =>
@@ -58,16 +73,24 @@ const Home = () => {
         </button>
       </div>
 
-      {renderNotes?.length === 0 ? (
-        <div className="text-center text-gray-500">
-          {translate("notesNotFound")}
+      {loading ? (
+        <div className="flex justify-center mt-4">
+          <Loading />
         </div>
       ) : (
-        <div className="grid pb-32 grid-cols-1 p-2 gap-4 max-w-[480px] mx-auto">
-          {renderNotes?.map((note) => (
-            <NoteItem key={note.id} note={note} />
-          ))}
-        </div>
+        <>
+          {renderNotes?.length === 0 ? (
+            <div className="text-center text-gray-500">
+              {translate("notesNotFound")}
+            </div>
+          ) : (
+            <div className="grid pb-32 grid-cols-1 p-2 gap-4 max-w-[480px] mx-auto">
+              {renderNotes?.map((note) => (
+                <NoteItem key={note.id} note={note} />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </DefaultLayout>
   );

@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useState,
-  useEffect,
-  ReactNode,
-  useCallback,
-} from "react";
+import { createContext, useState, ReactNode, useCallback } from "react";
 import {
   createNote,
   getNotes,
@@ -15,7 +9,7 @@ import {
   getNoteById,
 } from "../services/note/noteService";
 import { CreateNoteRequest, GetNotesResponse } from "../services/note/dto";
-import { getAccessToken } from "../utils";
+import { useAuth } from "../hooks/useAuth";
 
 interface Note {
   id: string;
@@ -52,6 +46,7 @@ export const NoteContext = createContext<NoteContextType | undefined>(
 );
 
 export default function NotesProvider({ children }: NotesProviderProps) {
+  const { token } = useAuth();
   const [notes, setNotes] = useState<Note[] | null>([]);
   const [note, setNote] = useState<Note | null>(null);
   const [archivedNotes, setArchivedNotes] = useState<Note[]>([]);
@@ -66,141 +61,191 @@ export default function NotesProvider({ children }: NotesProviderProps) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchNotes = useCallback(async () => {
+    if (!token) {
+      console.log("Token not available");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
-      const response: GetNotesResponse | null = await getNotes();
+      const response: GetNotesResponse | null = await getNotes(token);
       if (response) {
         const { data } = response;
         setNotes(data ?? null);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError("Failed to fetch notes");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [token]);
 
-  const fetchNoteById = useCallback(async (id: string) => {
-    setLoading(true);
-    try {
-      const response = await getNoteById(id);
-      if (response) {
-        const { data } = response;
-        setNote(data ?? null);
+  const fetchNoteById = useCallback(
+    async (id: string) => {
+      if (!token) {
+        console.log("Token not available");
+        setLoading(false);
+        return;
       }
-    } catch (error) {
-      console.log(error);
-      setError("Failed to fetch note");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+
+      setLoading(true);
+      try {
+        const response = await getNoteById(id, token);
+        if (response) {
+          const { data } = response;
+          setNote(data ?? null);
+        }
+      } catch (error) {
+        console.error(error);
+        setError("Failed to fetch note");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [token]
+  );
+
   const fetchArchivedNotes = useCallback(async () => {
+    if (!token) {
+      console.log("Token not available");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
-      const response = await getArchivedNotes();
+      const response = await getArchivedNotes(token);
       if (response) {
         const { data } = response;
         setArchivedNotes(data ?? []);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError("Failed to fetch archived notes");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [token]);
 
-  const addNote = useCallback(async (data: CreateNoteRequest) => {
-    setLoadingAddNote(true);
-    try {
-      const response = await createNote({ title: data.title, body: data.body });
-      if (response && response.data) {
-        const noteData: Note = response.data;
-        setNotes((prevNotes) =>
-          prevNotes ? [...prevNotes, noteData] : [noteData]
-        );
+  const addNote = useCallback(
+    async (data: CreateNoteRequest) => {
+      if (!token) {
+        console.log("Token not available");
+        return;
       }
-    } catch (error) {
-      console.log(error);
-      setError("Failed to create note");
-    } finally {
-      setLoadingAddNote(false);
-    }
-  }, []);
 
-  const archiveNoteById = useCallback(async (note: Note) => {
-    setLoadingArchiveNoteId(note.id);
-    try {
-      const response = await archiveNote(note.id);
-      if (response) {
-        setNotes((prevNotes) =>
-          prevNotes ? prevNotes.filter((n) => n.id !== note.id) : []
+      setLoadingAddNote(true);
+      try {
+        const response = await createNote(
+          { title: data.title, body: data.body },
+          token
         );
-        note.archived = true;
-        setArchivedNotes((prevArchivedNotes) => [
-          ...(prevArchivedNotes || []),
-          note,
-        ]);
+        if (response && response.data) {
+          const noteData: Note = response.data;
+          setNotes((prevNotes) =>
+            prevNotes ? [...prevNotes, noteData] : [noteData]
+          );
+        }
+      } catch (error) {
+        console.error(error);
+        setError("Failed to create note");
+      } finally {
+        setLoadingAddNote(false);
       }
-    } catch (error) {
-      console.log(error);
-      setError("Failed to archive note");
-    } finally {
-      setLoadingArchiveNoteId(null);
-    }
-  }, []);
+    },
+    [token]
+  );
 
-  const unarchiveNoteById = useCallback(async (note: Note) => {
-    setLoadingArchiveNoteId(note.id);
-    try {
-      const response = await unarchiveNote(note.id);
-      if (response) {
-        setArchivedNotes((prevArchivedNotes) =>
-          prevArchivedNotes
-            ? prevArchivedNotes.filter((n) => n.id !== note.id)
-            : []
-        );
-        note.archived = false;
-        setNotes((prevNotes) => [...(prevNotes || []), note]);
+  const archiveNoteById = useCallback(
+    async (note: Note) => {
+      if (!token) {
+        console.log("Token not available");
+        return;
       }
-    } catch (error) {
-      console.log(error);
-      setError("Failed to unarchive note");
-    } finally {
-      setLoadingArchiveNoteId(null);
-    }
-  }, []);
 
-  const deleteNoteById = useCallback(async (note: Note) => {
-    setLoadingDeleteNoteId(note.id);
-    try {
-      const response = await deleteNote(note.id);
-      if (response) {
-        setNotes((prevNotes) =>
-          prevNotes ? prevNotes.filter((n) => n.id !== note.id) : []
-        );
-        setArchivedNotes((prevArchivedNotes) =>
-          prevArchivedNotes
-            ? prevArchivedNotes.filter((n) => n.id !== note.id)
-            : []
-        );
+      setLoadingArchiveNoteId(note.id);
+      try {
+        const response = await archiveNote(note.id, token);
+        if (response) {
+          setNotes((prevNotes) =>
+            prevNotes ? prevNotes.filter((n) => n.id !== note.id) : []
+          );
+          note.archived = true;
+          setArchivedNotes((prevArchivedNotes) => [
+            ...(prevArchivedNotes || []),
+            note,
+          ]);
+        }
+      } catch (error) {
+        console.error(error);
+        setError("Failed to archive note");
+      } finally {
+        setLoadingArchiveNoteId(null);
       }
-    } catch (error) {
-      console.log(error);
-      setError("Failed to delete note");
-    } finally {
-      setLoadingDeleteNoteId(null);
-    }
-  }, []);
+    },
+    [token]
+  );
 
-  useEffect(() => {
-    const token = getAccessToken();
-    if (token) {
-      fetchNotes();
-    }
-  }, []);
+  const unarchiveNoteById = useCallback(
+    async (note: Note) => {
+      if (!token) {
+        console.log("Token not available");
+        return;
+      }
+
+      setLoadingArchiveNoteId(note.id);
+      try {
+        const response = await unarchiveNote(note.id, token);
+        if (response) {
+          setArchivedNotes((prevArchivedNotes) =>
+            prevArchivedNotes
+              ? prevArchivedNotes.filter((n) => n.id !== note.id)
+              : []
+          );
+          note.archived = false;
+          setNotes((prevNotes) => [...(prevNotes || []), note]);
+        }
+      } catch (error) {
+        console.error(error);
+        setError("Failed to unarchive note");
+      } finally {
+        setLoadingArchiveNoteId(null);
+      }
+    },
+    [token]
+  );
+
+  const deleteNoteById = useCallback(
+    async (note: Note) => {
+      if (!token) {
+        console.log("Token not available");
+        return;
+      }
+
+      setLoadingDeleteNoteId(note.id);
+      try {
+        const response = await deleteNote(note.id, token);
+        if (response) {
+          setNotes((prevNotes) =>
+            prevNotes ? prevNotes.filter((n) => n.id !== note.id) : []
+          );
+          setArchivedNotes((prevArchivedNotes) =>
+            prevArchivedNotes
+              ? prevArchivedNotes.filter((n) => n.id !== note.id)
+              : []
+          );
+        }
+      } catch (error) {
+        console.error(error);
+        setError("Failed to delete note");
+      } finally {
+        setLoadingDeleteNoteId(null);
+      }
+    },
+    [token]
+  );
 
   const value = {
     notes,

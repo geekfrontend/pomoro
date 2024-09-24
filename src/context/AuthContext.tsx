@@ -17,6 +17,7 @@ interface User {
 
 interface AuthState {
   user: User | null;
+  token: string | null;
   isError: boolean;
   isSuccess: boolean;
   isLoading: boolean;
@@ -34,6 +35,7 @@ interface AuthContextType extends AuthState {
 
 const initialState: AuthState = {
   user: null,
+  token: null,
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -95,7 +97,6 @@ export default function AuthProvider({
             }));
           }
         } else {
-          // handle the case where response is null or undefined
           setState((prevState) => ({
             ...prevState,
             isError: true,
@@ -129,10 +130,13 @@ export default function AuthProvider({
     }));
 
     try {
+      const token = getAccessToken();
+      if (!token) return;
       const response = await getMe();
       if (response) {
         setState((prevState) => ({
           ...prevState,
+          token: token,
           user: response.data,
           isSuccess: true,
           message: response.message,
@@ -175,6 +179,10 @@ export default function AuthProvider({
           }));
         } else if (response?.data) {
           if (response.data.accessToken) {
+            setState((prevState) => ({
+              ...prevState,
+              token: response.data.accessToken,
+            }));
             setAccessToken(response.data.accessToken);
           }
           await fetchUser();
@@ -212,6 +220,10 @@ export default function AuthProvider({
   useEffect(() => {
     const token = getAccessToken();
     if (token) {
+      setState((prevState) => ({
+        ...prevState,
+        token,
+      }));
       fetchUser();
     } else {
       setState((prevState) => ({ ...prevState, isLoading: false }));

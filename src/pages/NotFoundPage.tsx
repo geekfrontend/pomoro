@@ -1,4 +1,7 @@
+import { useLocale } from "../hooks/useLocale";
+
 const NotFoundPage = () => {
+  const { translate } = useLocale();
   return (
     <>
       <div className="relative flex justify-center min-h-screen bg-gray-100 items-top dark:bg-gray-900 sm:items-center sm:pt-0">
@@ -8,7 +11,7 @@ const NotFoundPage = () => {
               404
             </div>
             <div className="ml-4 text-lg tracking-wider text-gray-500 uppercase">
-              Not Found
+              {translate("notFound")}
             </div>
           </div>
         </div>
