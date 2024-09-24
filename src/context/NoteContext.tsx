@@ -10,6 +10,7 @@ import {
 } from "../services/note/noteService";
 import { CreateNoteRequest, GetNotesResponse } from "../services/note/dto";
 import { useAuth } from "../hooks/useAuth";
+import PropTypes from "prop-types";
 
 interface Note {
   id: string;
@@ -44,6 +45,10 @@ interface NotesProviderProps {
 export const NoteContext = createContext<NoteContextType | undefined>(
   undefined
 );
+
+NotesProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default function NotesProvider({ children }: NotesProviderProps) {
   const { token } = useAuth();

@@ -8,6 +8,7 @@ import React, {
 import { setAccessToken, getAccessToken, removeAccessToken } from "../utils";
 import { login, getMe, register } from "../services/auth/authService";
 import { RegisterRequest, LoginRequest } from "../services/auth/dto";
+import PropTypes from "prop-types";
 
 interface User {
   id: string;
@@ -46,6 +47,10 @@ const initialState: AuthState = {
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default function AuthProvider({
   children,

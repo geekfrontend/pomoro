@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { ToastType } from ".././../context/ToastContext";
+import PropTypes from "prop-types";
 
 interface ToastProps {
   id: string;
@@ -107,6 +108,13 @@ const Toast: React.FC<ToastProps> = ({ id, message, type, removeToast }) => {
       </button>
     </div>
   );
+};
+
+Toast.propTypes = {
+  id: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired,
+  type: PropTypes.oneOf<ToastType>(["success", "info", "error"]).isRequired,
+  removeToast: PropTypes.func.isRequired,
 };
 
 export default Toast;

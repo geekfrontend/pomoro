@@ -3,6 +3,7 @@ import { showFormattedDate } from "../../../utils/data";
 import { useNote } from "../../../hooks/useNote";
 import Loading from "../../../components/Loading";
 import { useLocale } from "../../../hooks/useLocale";
+import PropTypes from "prop-types";
 
 interface NoteProps {
   note: {
@@ -107,6 +108,16 @@ const NoteItem = ({ note }: NoteProps) => {
       </div>
     </div>
   );
+};
+
+NoteItem.propTypes = {
+  note: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    body: PropTypes.string.isRequired,
+    archived: PropTypes.bool.isRequired,
+    createdAt: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default NoteItem;

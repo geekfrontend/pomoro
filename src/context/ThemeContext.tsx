@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect, ReactNode } from "react";
+import PropTypes from "prop-types";
 
 interface ThemeContextProps {
   currentTheme: string;
@@ -13,6 +14,10 @@ export const ThemeContext = createContext<ThemeContextProps>({
 interface ThemeProviderProps {
   children: ReactNode;
 }
+
+ThemeProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default function ThemeProvider({ children }: ThemeProviderProps) {
   const persistedTheme = localStorage.getItem("theme");

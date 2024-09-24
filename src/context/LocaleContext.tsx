@@ -1,6 +1,7 @@
 import { createContext, useState, ReactNode } from "react";
 import { Locale } from "../types/locale";
 import { translations } from "../utils/translations";
+import PropTypes from "prop-types";
 
 interface LocaleContextProps {
   currentLocale: Locale;
@@ -17,6 +18,10 @@ export const LocaleContext = createContext<LocaleContextProps>({
 interface LocaleProviderProps {
   children: ReactNode;
 }
+
+LocaleProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default function LocaleProvider({ children }: LocaleProviderProps) {
   const persistedLocale = localStorage.getItem("locale") as Locale;

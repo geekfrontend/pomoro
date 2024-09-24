@@ -1,6 +1,7 @@
 import { createContext, useReducer, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ToastContainer from "../components/toast/ToastContainer";
+import PropTypes from "prop-types";
 
 export type ToastType = "success" | "info" | "error";
 
@@ -47,6 +48,10 @@ export interface ToastContextType {
   error: (message: string) => void;
   removeToast: (id: string) => void;
 }
+
+ToastProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default function ToastProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(toastReducer, initialState);
